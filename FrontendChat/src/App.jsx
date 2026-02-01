@@ -8,7 +8,7 @@ function App() {
     <Routes>
       <Route path="/" element={<Body />}>
        <Route path="/" element={<SelectUser />} />
-        <Route path="/a/:_id" element={<Demo />} />
+        <Route path="/a/:named/:_id" element={<Demo />} />
        
       </Route>
     </Routes>

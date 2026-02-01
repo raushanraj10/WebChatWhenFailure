@@ -4,8 +4,9 @@ const ModelUser = require("../Models/ModelUser")
 
 const Local=express.Router()
 Local.post("/savemessage",async (req,res)=>{
-    const {val}=req.body
-    const news=new ModelDemo({text:val})
+    const {val,named,id}=req.body
+   
+    const news=new ModelDemo({text:val,})
     await news.save()
     res.send("Done")
 })

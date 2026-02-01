@@ -7,7 +7,7 @@ const SelectUser=()=>{
     const [user,setuser]=useState([])
     const navigate=useNavigate()
     const handleclick=async(e)=>{
-      return navigate(`/a/${e}`)
+      return navigate(`/a/named named/${e}`)
     }
     
     const Fetchuser=async()=>{
@@ -17,7 +17,7 @@ const SelectUser=()=>{
     useEffect(()=>
         {Fetchuser()}
     ,[])
-    if(user.length===0) return (<div>{<CardShimmer/>}</div>)
+    if(user.length===0) return (<div><CardShimmer/></div>)
 return (
     <div className="flex justify-center ">
     {user.map((e)=>{return (
