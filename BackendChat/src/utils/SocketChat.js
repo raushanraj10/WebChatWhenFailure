@@ -1,4 +1,5 @@
-const { Server } = require("socket.io")
+const { Server } = require("socket.io");
+const ModelDemo = require("../Models/ModelDemo");
 
 
 const SocketChat =(Httpsever)=>{
@@ -6,7 +7,7 @@ const SocketChat =(Httpsever)=>{
 
 const io = new Server(Httpsever, {
   cors: {
-    origin: "http://localhost:5175",
+    origin: "http://localhost:5174",
   }
 });
 
@@ -19,11 +20,16 @@ socket.on("joinchat",({fromuserId,touserId})=>{
     socket.join(room)
 })
 
-socket.on("send",({fromuserId,touserId,text})=>{
+socket.on("send",async({fromuserId,touserId,text})=>{
    const val=text;
+    const news=new ModelDemo(
+        {text,SenderId:fromuserId,touserId})
+    await news.save()
+   
+   const SenderId=fromuserId
     const room=[fromuserId,touserId].sort().join("_")
     //  console.log(room)
-    io.to(room).emit("received",(val))
+    io.to(room).emit("received",({val,SenderId}))
 })
 
 
