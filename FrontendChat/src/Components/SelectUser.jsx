@@ -4,15 +4,18 @@ import CardShimmer from "./CardShimmer"
 import { useNavigate } from "react-router"
 
 const SelectUser=()=>{
+
     const [user,setuser]=useState([])
     const navigate=useNavigate()
     const handleclick=async(e)=>{
-      return navigate(`/a/named named/${e}`)
+      return navigate(`/chat/${e}/named named/12Na`)
     }
     
     const Fetchuser=async()=>{
+      try{
         const res=await axios.get("http://localhost:5000/getuser",{withCredentials:true})
-        setuser(res.data)
+        setuser(res.data)}
+        catch(err){console.log(err.message)}
     }
     useEffect(()=>
         {Fetchuser()}
