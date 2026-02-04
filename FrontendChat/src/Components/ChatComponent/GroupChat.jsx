@@ -4,8 +4,9 @@ import { useParams } from "react-router"
 import { useState } from "react"
 import { io } from "socket.io-client"
 import axios from "axios"
+import AllGroupConnection from "./AllGroupConnection"
 
-const SingleChat=()=>{
+const GroupChat=()=>{
     const [text,settext]=useState("")
     const [sendtext,setsendtext]=useState([])
     const [receivetext,setreceivetext]=useState([])
@@ -53,7 +54,7 @@ useEffect(()=>{
   
     <div className="h-screen w-screen bg-blue-100 ">
           <div className="flex ">
-    <div> <Connection/></div>
+    <div> <AllGroupConnection/></div>
 {touserId=="12Na"&&
 <div className="text-7xl mx-96 text-center font-extrabold text-blue-900">Select User</div>
 }
@@ -91,4 +92,4 @@ useEffect(()=>{
     </>
  )
 }
-export default SingleChat
+export default GroupChat

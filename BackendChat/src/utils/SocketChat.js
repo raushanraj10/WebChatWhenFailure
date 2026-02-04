@@ -1,13 +1,15 @@
 const { Server } = require("socket.io");
 const ModelDemo = require("../Models/ModelDemo");
+require('@dotenvx/dotenvx').config()
 
+const alloworigin=[process.env.BASE_URL1,process.env.BASE_URL2,process.env.BASE_URL3,process.env.BASE_URL4,process.env.BASE_URL5]
 
 const SocketChat =(Httpsever)=>{
     try{
 
 const io = new Server(Httpsever, {
   cors: {
-    origin: "http://localhost:5174",
+    origin:alloworigin,
   }
 });
 

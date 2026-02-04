@@ -27,12 +27,29 @@ const Connection=()=>{
         {Fetchuser() 
         }
     ,[])
+
+   const HandleAdd=()=>{
+    return Navigate(`/addgroup/${getId.fromuserId}`)
+   }
+      const HandleGroup=()=>{
+    return Navigate(`/groupchat/${getId.fromuserId}`)
+   }
+
     return ((finaluser.length!==0&&
+
+        <div>
+            <button onClick={()=>HandleAdd()} className="text-4xl m-5 text-blue-700 "> Add Group</button>
+             <button onClick={()=>HandleGroup()} className="text-4xl m-5 text-blue-700 ">Group Chat</button>
         <div className=" border-4 w-60 h-[30vw] rounded-4xl bg-blue-900">{finaluser.map((e)=>{
             return(
+                <>
                 <button onClick={()=>Handleuser({id:e._id,name:e.name})} className="m-6 text-2xl text-balance">{e.name}</button>  
+                </>
             )
-        })}</div>)
+        })}</div>
+        </div>
+        )
+        
     )
 }
 export default Connection
