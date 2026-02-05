@@ -2,6 +2,7 @@ const express=require("express")
 const ModelDemo = require("../Models/ModelDemo")
 const ModelUser = require("../Models/ModelUser")
 const ModelGroup = require("../Models/ModelGroup")
+const ModelGroupMessage = require("../Models/ModelGroupMessage")
 
 const Local=express.Router()
 
@@ -52,6 +53,13 @@ Local.post("/getgroupalluser",async(req,res)=>{
     // console.log(groupId)
  const data=await ModelGroup.findOne({_id:groupId})
 //  console.log(data)
+    res.send(data)
+})
+
+Local.post("/getgroupmessage",async(req,res)=>{
+    const {groupId}=req.body
+    console.log(typeof(groupId))
+   const data=await ModelGroupMessage.find({groupId})
     res.send(data)
 })
 

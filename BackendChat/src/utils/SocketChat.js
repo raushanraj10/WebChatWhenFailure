@@ -1,5 +1,6 @@
 const { Server } = require("socket.io");
 const ModelDemo = require("../Models/ModelDemo");
+const ModelGroupMessage = require("../Models/ModelGroupMessage");
 require('@dotenvx/dotenvx').config()
 
 const alloworigin=[process.env.BASE_URL1,process.env.BASE_URL2,process.env.BASE_URL3,process.env.BASE_URL4,process.env.BASE_URL5]
@@ -34,18 +35,23 @@ socket.on("send",async({fromuserId,touserId,text})=>{
     io.to(room).emit("received",({val,SenderId}))
 })
 
-socket.on("joingroup",({allid})=>{
-    const room= allid.sort().join("_");
-    // console.log(room)
-    socket.join(room)
+socket.on("joingroup", ({ allid }) => {
+  const room = [...allid].sort().join("_")
+  socket.join(room)
+//   console.log("JOINED ROOMS:", socket.rooms)
 })
 
-socket.on("sendgroupmessage",({allid,text,fromuserId})=>{
-     const room= allid.sort().join("_");
-    //  console.log(room)
+
+socket.on("sendgroupmessage",async ({allid,text,fromuserId,groupId})=>{
+        const room = [...allid].sort().join("_")
      const msg=text;
      const fromId=fromuserId
-     io.emit("recievedgroupmessage",({msg,fromId}))
+        // console.log(socket.rooms)
+        const data=ModelGroupMessage({
+            text,SenderId:fromuserId,groupId
+        })
+        await data.save()
+     io.to(room).emit("recievedgroupmessage",({msg,fromId}))
 })
 
 

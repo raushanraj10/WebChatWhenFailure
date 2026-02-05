@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState,useRef } from "react"
 import AllGroupConnection from "./AllGroupConnection"
 import { useParams } from "react-router"
 import axios from "axios"
@@ -10,25 +10,37 @@ const [message,setmessage]=useState([])
 const [allid,setallid]=useState([])
 const [SenderId, setSenderId]=useState("")
 const {fromuserId,groupId}=useParams()
-  const socket=io("http://localhost:5000")
   const Fetchuser=async()=>{
-        const res=await axios.post("http://localhost:5000/getgroupalluser",{groupId},{withCredentials:true})
-        setallid(res.data.allId)
+    const recieved=await axios.post("http://localhost:5000/getgroupmessage",{groupId},{withCredentials:true})
+    const user=await axios.post("http://localhost:5000/getgroupalluser",{groupId},{withCredentials:true})
+        setallid(user?.data?.allId)
+        setmessage(recieved?.data)
     }
     
+const socketRef = useRef(null)
+
+useEffect(() => {
+  if (!socketRef.current) {
+    socketRef.current = io("http://localhost:5000")
+  }
+
+  return () => {
+    socketRef.current.disconnect()
+    socketRef.current = null
+  }
+}, [])
 
     useEffect(()=>{
-      if(allid.lenght<1)return;
-      socket.emit("joingroup",({allid}))
-    },[allid])
+      if(allid.lenght===0)return;
+      socketRef.current.emit("joingroup",({allid}))
+    },[allid,groupId])
 
     useEffect(()=>{
-      socket.on("recievedgroupmessage",({msg,fromId})=>{
-        setSenderId(fromId)
-      
-       setmessage(prev=>[...prev,{text:msg,fromuserId:fromId}])
-      })
-     
+      socketRef.current.on("recievedgroupmessage",({msg,fromId})=>{
+        // setSenderId(fromId)
+      if(fromuserId===fromId)return;
+       setmessage(prev=>[...prev,{text:msg,SenderId:fromId}])
+      })  
     },[])
     
     useEffect(()=>
@@ -38,8 +50,9 @@ const {fromuserId,groupId}=useParams()
 
 
 const HandleSend=()=>{
-  socket.emit("sendgroupmessage",({text,fromuserId,allid}))
-   setmessage(prev=>[...prev,{text,fromuserId}])
+ socketRef.current.emit("sendgroupmessage",({text,fromuserId,allid,groupId}))
+  //  setSenderId(fromuserId)
+   setmessage(prev=>[...prev,{text,SenderId:fromuserId}])
   settext("")
 }
 
@@ -54,7 +67,7 @@ const HandleSend=()=>{
   <div
     key={i}
     className={`chat ${
-      msg.fromuserId === fromuserId ? "chat-end" : "chat-start"
+      msg.SenderId === fromuserId ? "chat-end" : "chat-start"
     }`}
   >
     <div
