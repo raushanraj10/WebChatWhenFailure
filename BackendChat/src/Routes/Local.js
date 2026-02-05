@@ -46,4 +46,13 @@ Local.post("/addgroup",async(req,res)=>{
  await data.save()
     res.send(data)
 })
+
+Local.post("/getgroupalluser",async(req,res)=>{
+    const {groupId}=req.body
+    // console.log(groupId)
+ const data=await ModelGroup.findOne({_id:groupId})
+//  console.log(data)
+    res.send(data)
+})
+
 module.exports=Local

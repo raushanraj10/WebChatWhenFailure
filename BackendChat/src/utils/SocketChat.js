@@ -34,6 +34,19 @@ socket.on("send",async({fromuserId,touserId,text})=>{
     io.to(room).emit("received",({val,SenderId}))
 })
 
+socket.on("joingroup",({allid})=>{
+    const room= allid.sort().join("_");
+    // console.log(room)
+    socket.join(room)
+})
+
+socket.on("sendgroupmessage",({allid,text,fromuserId})=>{
+     const room= allid.sort().join("_");
+    //  console.log(room)
+     const msg=text;
+     const fromId=fromuserId
+     io.emit("recievedgroupmessage",({msg,fromId}))
+})
 
 
 })

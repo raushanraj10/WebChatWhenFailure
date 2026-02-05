@@ -1,71 +1,60 @@
-import { use, useEffect } from "react"
-import Connection from "../Connection"
-import { useParams } from "react-router"
-import { useState } from "react"
-import { io } from "socket.io-client"
-import axios from "axios"
+import { useEffect, useState } from "react"
 import AllGroupConnection from "./AllGroupConnection"
+import { useParams } from "react-router"
+import axios from "axios"
+import { io } from "socket.io-client"
 
 const GroupChat=()=>{
-    const [text,settext]=useState("")
-    const [sendtext,setsendtext]=useState([])
-    const [receivetext,setreceivetext]=useState([])
-    const [message,setmessage]=useState([])
-    const {fromuserId,touserId,named}=useParams()
-    const socket=io("http://localhost:5000");
+  const [text,settext]=useState("")
+const [message,setmessage]=useState([])
+const [allid,setallid]=useState([])
+const [SenderId, setSenderId]=useState("")
+const {fromuserId,groupId}=useParams()
+  const socket=io("http://localhost:5000")
+  const Fetchuser=async()=>{
+        const res=await axios.post("http://localhost:5000/getgroupalluser",{groupId},{withCredentials:true})
+        setallid(res.data.allId)
+    }
+    
 
- const FetchPrivatedata=async()=>{
-    if(touserId==="12Na")return;
-    const res=await axios.post("http://localhost:5000/privatemessage",{fromuserId,touserId},{withCredentials:true})
-    setmessage(res.data)
-    console.log(message)
-  }
+    useEffect(()=>{
+      if(allid.lenght<1)return;
+      socket.emit("joingroup",({allid}))
+    },[allid])
 
-useEffect(()=>{
-    if(touserId==="12Na") return;
-    socket.emit("joinchat",({fromuserId,touserId}))
-},[touserId])
+    useEffect(()=>{
+      socket.on("recievedgroupmessage",({msg,fromId})=>{
+        setSenderId(fromId)
+      
+       setmessage(prev=>[...prev,{text:msg,fromuserId:fromId}])
+      })
+     
+    },[])
+    
+    useEffect(()=>
+        {Fetchuser() 
+        }
+    ,[groupId])
+
 
 const HandleSend=()=>{
-       setmessage(prev => [...prev, {text,SenderId:fromuserId}])
-    socket.emit("send",({fromuserId,touserId,text}));
-    settext("");
+  socket.emit("sendgroupmessage",({text,fromuserId,allid}))
+   setmessage(prev=>[...prev,{text,fromuserId}])
+  settext("")
 }
-
-useEffect(()=>{
-    FetchPrivatedata()
-    setsendtext([])
-    setreceivetext([])
-    setmessage([])
-},[touserId])
-
-
-useEffect(()=>{
-    socket.on("received",({val,SenderId})=>{
-        if(SenderId===fromuserId)return;
-        // console.log(val)
-       setmessage(prev => [...prev, {text:val,SenderId}])
-        console.log(receivetext)
-    })
-  },[touserId])
 
  return (
- <>
-  
-    <div className="h-screen w-screen bg-blue-100 ">
-          <div className="flex ">
-    <div> <AllGroupConnection/></div>
-{touserId=="12Na"&&
-<div className="text-7xl mx-96 text-center font-extrabold text-blue-900">Select User</div>
-}
-   {touserId!=="12Na"&& <div className="w-screen p-[5vh] h-[40vw]  overflow-scroll">
- 
+  <div >
+  <div className="  bg-amber-50  w-screen">
+    <div className="flex">
+    <AllGroupConnection/>
+    <div className=" w-screen h-screen m-10 p-4 ">
 
-{message.map((msg, i) => (
+     {message.map((msg, i) => (
   <div
     key={i}
     className={`chat ${
-      msg.SenderId === fromuserId ? "chat-end" : "chat-start"
+      msg.fromuserId === fromuserId ? "chat-end" : "chat-start"
     }`}
   >
     <div
@@ -81,15 +70,16 @@ useEffect(()=>{
 ))}
 
 
-    </div>}
-</div>
-
- {touserId!=="12Na"&&<div className="flex justify-center">
-    <input value={text} onChange={(e)=>settext(e.target.value)} className=" bg-cyan-900  h-9 font-semibold rounded-b-lg w-lvh gap-4 bg-neutral-secondary-medium border border-default-medium" placeholder=".Type...."></input>
-    <button onClick={HandleSend} className="bg-sky-500 hover:bg-sky-700 w-20 rounded-2xl mx-3" placeholder="sdfasd">Send</button>
- </div>}
     </div>
-    </>
+  </div>
+  <div className=" flex-col-reverse gap-5 justify-center text-center">
+  <input value={text} onChange={(e)=>settext(e.target.value)} className="bg-blue-700 w-96 rounded-xl"></input>
+  <button onClick={()=>{HandleSend()}} className="bg-sky-500 hover:bg-sky-700 w-20 rounded-xl">Send</button>
+  </div>
+  </div>
+  
+
+  </div>
  )
 }
 export default GroupChat

@@ -32,7 +32,7 @@ const Connection=()=>{
     return Navigate(`/addgroup/${getId.fromuserId}`)
    }
       const HandleGroup=()=>{
-    return Navigate(`/groupchat/${getId.fromuserId}`)
+    return Navigate(`/groupchat/${getId.fromuserId}/123`)
    }
 
     return ((finaluser.length!==0&&

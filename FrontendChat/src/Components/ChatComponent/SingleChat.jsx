@@ -44,7 +44,7 @@ useEffect(()=>{
         if(SenderId===fromuserId)return;
         // console.log(val)
        setmessage(prev => [...prev, {text:val,SenderId}])
-        console.log(receivetext)
+        // console.log(receivetext)
     })
   },[touserId])
 

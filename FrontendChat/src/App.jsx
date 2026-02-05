@@ -16,7 +16,7 @@ function App() {
         <Route path="/groupinfo/:fromuserId" element={<AllGroupConnection />} />
         <Route path="/chat/:fromuserId/:named/:touserId" element={<SingleChat />} />
         <Route path="/addgroup/:fromuserId" element={<AddGroup />} />
-        <Route path="/groupchat/:fromuserId" element={<GroupChat />} />
+        <Route path="/groupchat/:fromuserId/:groupId" element={<GroupChat />} />
       </Route>
     </Routes>
   </BrowserRouter>)
